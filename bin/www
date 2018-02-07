@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var config = require('./../config/app.config');
+
+var port = config.app.port || 3000;
+app.set('port', port);
+app.listen(port);

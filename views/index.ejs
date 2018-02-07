@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket测试</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<body>
+<div id="sse">
+    <div>
+        <span>Hello ! </span>
+    </div>
+    <div>
+        <span><%= username %> !</span>
+    </div>
+    <hr>
+    <div>
+        <a href="javascript:linkRoom()">连接房间</a>
+        <lable id="link-msg" unlink></lable>
+    </div>
+    <hr>
+    <div>
+        <a href="javascript:send()">Send</a>
+    </div>
+    <div>
+        <a href="javascript:sendTask()">SendTask</a>
+    </div>
+    <hr>
+    <div>
+        <span id="msg"></span>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+    ws = null;
+
+    function linkRoom() {
+        if ("WebSocket" in window) {
+            window.ws = new WebSocket('ws://192.168.16.3:3000/ws');
+            ws.onopen = function () {
+                $('#link-msg').text('link success!!')
+                console.log('连接成功....');
+            };
+            ws.onmessage = function (evt) {
+                console.log("数据已接收..." + evt.data);
+                var divEle = document.createElement('div');
+                var textNode = document.createTextNode(evt.data);
+                divEle.appendChild(textNode);
+                document.getElementById('msg').appendChild(divEle);
+            };
+            ws.onclose = function () {
+                console.log("连接已关闭...");
+            };
+            ws.onerror = function (err) {
+                console.log("连接错误...");
+                console.dir(err)
+            };
+        } else {
+            console.log("您的浏览器不支持 WebSocket!");
+        }
+    }
+
+    function send() {
+        if (ws) {
+            ws.send(new Date().getTime());
+        } else {
+            console.log('连接不存在');
+        }
+    }
+
+    var intervalTask = null;
+    function sendTask(){
+        if(!intervalTask){
+            intervalTask = window.setInterval(()=>{
+                send()
+            },2000);
+        }else{
+            clearInterval(intervalTask);
+        }
+    }
+</script>
+</body>
+</html>
