@@ -2,8 +2,9 @@ const mysql = require('mysql');
 const config = require('./../config/mysql.config');
 const path = require('path');
 const fs = require('fs');
+const async = require('async');
 
-const validateTables = false;
+const validateTables = true;
 
 
 class MysqlClient {
@@ -46,7 +47,6 @@ class MysqlClient {
                 }
             }
         }.bind(this))
-
     }
 
 
@@ -64,9 +64,37 @@ class MysqlClient {
                 if (err) {
                     console.log(`${sqlValidate} read error!`);
                 }
-                console.log(data.toString());
 
+                var tables = JSON.parse(data.toString());
+                // console.dir(tables);
 
+                if(!tables){
+                    _this.resolve({server: `Mysql[${_this.getServerInfo()}] without validate tables!`, status: true})
+                }
+
+                let methods = [];
+                let funTemplate = (client,sql)=>{
+                    return function(callback){
+                        console.log(sql);
+                        client.query(sql,callback);
+                    }
+                }
+
+                for(let tableName in tables){
+                    let columns = tables[tableName];
+                    let selectSql = `select ${columns.join(',')} from ${tableName}`;
+                    // console.log(selectSql);
+
+                    methods.push(funTemplate(_this.client,selectSql));
+                }
+
+                async.series(methods, function (err, result) {
+                    if(err){
+                        console.log(err);
+                        _this.reject(new Error(`Mysql Connect Success !  But table error ! Server : [${_this.getServerInfo()}] Error:${err.code} | ${err.message}`));
+                    }
+                    _this.resolve({server: `Mysql[${_this.getServerInfo()}] with validate tables!`, status: true})
+                });
             });
         }
     }
