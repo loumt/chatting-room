@@ -1,0 +1,17 @@
+<!DOCTYPE>
+<html>
+<head>
+</head>
+
+<body>
+<div>
+    <a href="javascript:toClientLoginPage()">ClientLoginPage</a>
+</div>
+<script>
+    function toClientLoginPage(){
+//        document.getElementById('main-context').src = "login-wj.html";
+        window.parent.document.getElementById('main-context').src = "login-wj.html";
+    }
+</script>
+</body>
+</html>
