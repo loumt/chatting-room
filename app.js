@@ -8,7 +8,26 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const version = require('./package.json').version;
 var session = require('express-session');
+
+
+//init connection
+let mqTool = require('./connects/mq.conn');
+let redisTool = require('./connects/redis.conn');
+let mysqlTool = require('./connects/mysql.conn');
+
+
+Promise.all([
+    // mqTool.createValidate(),
+    // redisTool.createValidate(),
+    mysqlTool.createValidate(version)
+]).then((result) => {
+    console.dir(result);
+}).catch((error) => {
+    console.log(`Server Error : ${error.message}`);
+    throw new Error(crashMsg);
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,14 +37,28 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(session({secret: 'wilson'}));
+app.use(session({secret: 'wilson',resave:true,saveUninitialized:true}));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", ['http://192.168.16.4:3005','http://192.168.16.3:3005']);
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
 
 app.use(function (req, res, next) {
     console.log('middleware');
     req.testing = 'testing';
     return next();
 });
+
+
+app.get('/list',(req,res,next)=>{
+    res.status(200).json({success:true,code:200,message:'Request is success!!'})
+})
 
 app.use('/room/:userId', (req, res, next) => {
     let userId = req.params.userId;
@@ -69,6 +102,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
 
 module.exports = app;
 

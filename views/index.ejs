@@ -7,6 +7,9 @@
 <body>
 <div id="sse">
     <div>
+        <a href="javascript:testApi()">testApi</a>
+    </div>
+    <div>
         <span>Hello ! </span>
     </div>
     <div>
@@ -27,6 +30,9 @@
     <hr>
     <div>
         <span id="msg"></span>
+    </div>
+    <div>
+        <a href="javascript:toClientLoginPage()">ClientLoginPage</a>
     </div>
 </div>
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
@@ -76,6 +82,21 @@
         }else{
             clearInterval(intervalTask);
         }
+    }
+
+    function testApi(){
+        $.ajax({
+            url:'http://192.168.11.5:3005/list',
+            method:'get',
+            dataType :'json',
+            data:{},
+            error:function(error){
+                console.log(error);
+            },
+            success:function(data){
+                console.dir(data)
+            }
+        })
     }
 </script>
 </body>
