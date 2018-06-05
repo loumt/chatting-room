@@ -21,7 +21,7 @@ let mysqlTool = require('./connects/mysql.conn');
 Promise.all([
     // mqTool.createValidate(),
     // redisTool.createValidate(),
-    mysqlTool.createValidate(version)
+    // mysqlTool.createValidate(version)
 ]).then((result) => {
     console.dir(result);
 }).catch((error) => {
@@ -40,25 +40,31 @@ app.use(cookieParser());
 app.use(session({secret: 'wilson',resave:true,saveUninitialized:true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.all('*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", ['http://192.168.16.4:3005','http://192.168.16.3:3005']);
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By",' 3.2.1');
-    res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-});
+// app.all('*', function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", ['http://192.168.20.91:3005','http://192.168.16.3:3005']);
+//     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+//     res.header("X-Powered-By",' 3.2.1');
+//     res.header("Content-Type", "application/json;charset=utf-8");
+//     next();
+// });
 
 app.use(function (req, res, next) {
     console.log('middleware');
     req.testing = 'testing';
-    return next();
+    next();
 });
 
 
 app.get('/list',(req,res,next)=>{
     res.status(200).json({success:true,code:200,message:'Request is success!!'})
 })
+
+
+app.get('/test',(req,res,next)=>{
+    res.render('test');
+})
+
 
 app.use('/room/:userId', (req, res, next) => {
     let userId = req.params.userId;
@@ -94,6 +100,7 @@ app.ws('/ws', function (ws, req) {
 
 // error handler
 app.use(function (err, req, res, next) {
+    console.log(err)
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
