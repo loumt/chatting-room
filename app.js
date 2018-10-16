@@ -13,21 +13,21 @@ var session = require('express-session');
 
 
 //init connection
-let mqTool = require('./connects/mq.conn');
-let redisTool = require('./connects/redis.conn');
-let mysqlTool = require('./connects/mysql.conn');
+// let mqTool = require('./connects/mq.conn');
+// let redisTool = require('./connects/redis.conn');
+// let mysqlTool = require('./connects/mysql.conn');
 
 
-Promise.all([
+// Promise.all([
     // mqTool.createValidate(),
     // redisTool.createValidate(),
     // mysqlTool.createValidate(version)
-]).then((result) => {
-    console.dir(result);
-}).catch((error) => {
-    console.log(`Server Error : ${error.message}`);
-    throw new Error(crashMsg);
-})
+// ]).then((result) => {
+//     console.dir(result);
+// }).catch((error) => {
+//     console.log(`Server Error : ${error.message}`);
+//     throw new Error(crashMsg);
+// })
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -50,21 +50,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // });
 
 app.use(function (req, res, next) {
-    console.log('middleware');
     req.testing = 'testing';
     next();
 });
-
-
-app.get('/list',(req,res,next)=>{
-    res.status(200).json({success:true,code:200,message:'Request is success!!'})
-})
-
-
-app.get('/test',(req,res,next)=>{
-    res.render('test');
-})
-
 
 app.use('/room/:userId', (req, res, next) => {
     let userId = req.params.userId;
@@ -90,7 +78,7 @@ app.ws('/ws', function (ws, req) {
 
     ws.on('message', message => {
         console.log('Received -', message);
-        ws.send(message);
+        ws.send(`M: ${message}`);
     });
 
     ws.on('close', () => {
