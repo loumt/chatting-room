@@ -56,7 +56,7 @@
 
     function linkRoom() {
         if ("WebSocket" in window) {
-            window.ws = new WebSocket('ws://localhost:3100/ws');
+            window.ws = new WebSocket(`ws://${window.location.host}/ws`);
             ws.onopen = function () {
                 $('#link-msg').text('link success!!')
                 console.log('连接成功....');
