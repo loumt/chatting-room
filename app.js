@@ -55,7 +55,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/',(req,res)=>{
-    res.status(200).json({success:false,data:'111'})
+    res.status(200).json({success:false,data:'22222'})
 })
 
 app.use('/csp/index',(req,res)=>{
