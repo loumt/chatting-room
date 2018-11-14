@@ -54,6 +54,10 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use('/',(req,res)=>{
+    res.status(200).json({success:false,data:'Name'})
+})
+
 app.use('/csp/index',(req,res)=>{
     res.header('Content-Security-Policy',"default-src 'self'; frame-src 'self' blob:; script-src 'unsafe-inline' 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src blob:; img-src 'self' data: http://192.168.20.91:3100; frame-ancestors http://192.168.20.91:3100")
   //http://192.168.20.91:3100 file://*
