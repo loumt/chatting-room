@@ -10,6 +10,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const version = require('./package.json').version;
 var session = require('express-session');
+const doc = require('./doc')
+const cors = require('cors')
 
 
 //init connection
@@ -49,14 +51,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 //     next();
 // });
 
+app.use(cors())
+
 app.use(function (req, res, next) {
     req.testing = 'testing';
     next();
 });
 
-app.use('/',(req,res)=>{
-    res.status(200).json({success:false,data:'333333333'})
+app.use('/test/request',(req,res)=>{
+    res.status(200).json({success:true,messgage:'Success!!'})
 })
+
+
+app.use(require('./routers/doc.router'))
+
+// app.use('/',(req,res)=>{
+//     res.status(200).json({success:false,data:'33333333355555555'})
+// })
 
 app.use('/csp/index',(req,res)=>{
     res.header('Content-Security-Policy',"default-src 'self'; frame-src 'self' blob:; script-src 'unsafe-inline' 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src blob:; img-src 'self' data: http://192.168.20.91:3100; frame-ancestors http://192.168.20.91:3100")
